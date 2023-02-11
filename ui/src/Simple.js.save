@@ -1,0 +1,72 @@
+import React from "react";
+import { useState, useEffect } from "react";
+import io from "socket.io-client";
+
+function Simple() {
+  const [performanceData, setPerformanceData] = useState({"08:00:27:72:80:14" : {}});
+  const [macA, setMacA] = useState([]);
+
+  useEffect(() => {
+
+    setMacA(['08:00:27:72:80:14'])
+    async function getAuthToken() {
+      try {
+        // Add proxy and make a get request with sending the clientType object
+        // Client has to be either [UI] or [dog] to recieve respective token
+        let token =
+          "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjoiZTd0RzZhelZlbVdnN210IiwiaWF0IjoxNjcwOTE3ODIxLCJleHAiOjE2NzA5MjE0MjF9.DueInufE9eXfDrUoWJeaaXhZ1r6nkb_5wRfIm6GllNI";
+
+        const socket = io.connect("http://192.168.0.155:8003");
+        socket.emit("clientAuth", token);
+
+        socket.on("data", (data) => {
+          console.log(data);
+         
+ 	 let index = macA.findIndex(e => e === data.macA)
+          if (index === -1){
+            let mac = macA
+            mac.push(data.macA)
+            setMacA(mac)
+          let perfData = performanceData
+	  perfData.push(data)
+	  setPerformanceData(perfData)
+  }
+
+else   {
+	//let matchIndex = performanceData.findIndex(e => e.macA === data.macA)
+	//let perfData = performanceData
+	//perfData[matchIndex] = data
+	setPerformanceData({
+	 ...performanceData,
+	 [data.macA] : data
+       })
+ console.log(performanceData) 
+}
+        });
+      } catch (error) {
+        console.log(error);
+      }
+    }
+
+    getAuthToken();
+  }, []);
+
+  return (
+    <>
+      <ol>
+        <li>MAC Address - {performanceData.macA}</li>
+        <li>Up Time - {performanceData.upTime} </li>
+        <li>OS Type - {performanceData.osType} </li>
+        <li>CPU Model Type - {performanceData.cpuModel} </li>
+        <li>Number of Cores - {performanceData.numCores} </li>
+        <li>CPU Speed - {performanceData.cpuSpeed} </li>
+        <li>CPU Load - {performanceData.cpuLoad} </li>
+        <li>Total Memory : {performanceData.totalMem}</li>
+        <li>Used Memory : {performanceData.usedMem}</li>
+        <li>Free Memory : {performanceData.freeMem}</li>
+      </ol>
+    </>
+  );
+}
+
+export default Simple;
