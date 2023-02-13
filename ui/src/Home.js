@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import {  useEffect } from "react";
 import io from "socket.io-client";
 import "./App.css";
 // import spinner from "./spinner.gif";
@@ -67,8 +67,8 @@ const data4 = {
   ],
 };
 function Home() {
-  const [performanceData, setPerformanceData] = useState({});
-  const [keys, setKeys] = useState([]);
+  // const [performanceData, setPerformanceData] = useState({});
+  // const [keys, setKeys] = useState([]);
   // let [response, setResponse] = useState();
   let response = {
     labels: ["Total Memory", "Used Memory", "Free Memory"],

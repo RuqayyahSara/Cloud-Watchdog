@@ -4,7 +4,7 @@ import io from "socket.io-client";
 
 function Simple() {
   const [performanceData, setPerformanceData] = useState({});
-  const [macA, setMacA] = useState({});
+  const [macA, setMacA] = useState([]);
 
   useEffect(() => {
     // setMacA(['08:00:27:72:80:14'])
@@ -20,24 +20,26 @@ function Simple() {
 
         socket.on("data", (data) => {
 
-          //let index = macA.findIndex(e => e === data.macA)
-          //if (index === -1) {
-            //let mac = []
-           // mac = macA
- //console.log(mac)
-          //  mac.push(data.macA)
+          let index = macA.findIndex(e => e === data.macA)
+          if (index === -1) {
+            let mac = []
+            mac = macA
+            mac.push(data.macA)
+            setMacA(mac)
 
-//setMacA(mac)
-	   //setMacA({
-            //...macA,
-            //[data.macA]: data.macA
-          //})
+            let perfData = {}
+            perfData = performanceData
+            perfData[data.macA] = data
+            setPerformanceData(perfData)
+            console.log(performanceData)
+          }
+          else {
+            setPerformanceData({
+              ...performanceData,
+              [macA[index]]: data
+            })
+          }
 
-          
-          setPerformanceData({
-            ...performanceData,
-            [data.macA]: data
-          })
         });
       } catch (error) {
         console.log(error);
@@ -45,16 +47,16 @@ function Simple() {
     }
 
     getAuthToken();
-// eslint-disable-next-line  
-}, []);
+    // eslint-disable-next-line  
+  }, []);
 
   return (
     <>
-   <h1>Watch Dog Client Screens</h1>
+      <h1>Watch Dog Client Screens</h1>
 
-      { Object.keys(performanceData).map((e, i) => performanceData[e] && (
+      {Object.keys(performanceData).map((e, i) => performanceData[e] && (
         <ol key={i}>
-          <li><b>Screen {i+1}</b></li>
+          <li><b>Screen {i + 1}</b></li>
           <li>MAC Address - <b>{performanceData[e].macA}</b></li>
           <li>Up Time - {performanceData[e].upTime} </li>
           <li>OS Type - {performanceData[e].osType} </li>

@@ -1,7 +1,7 @@
 import React from "react";
 import { Route, Routes } from "react-router-dom";
-import Home from "./Home.js";
-import Token from "./Token.js";
+// import Home from "./Home.js";
+// import Token from "./Token.js";
 import Simple from "./Simple.js";
 
 function App() {
