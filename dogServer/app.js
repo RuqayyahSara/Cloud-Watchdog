@@ -11,7 +11,7 @@ async function generate() {
 
     async function getToken() {
       try {
-        let res = await axios.post("http://192.168.0.155:8003/token", data)
+        let res = await axios.post("http://compiler.today:4000/token", data)
         console.log("\nToken generated successfully!\n")
         return res.data
       } catch (err) {
@@ -33,7 +33,7 @@ async function generate() {
       data.macA = readlineSync.question("Invalid MAC Address. Enter again : ")
 
     console.log("Generating Token .... ")
-    let res = await axios.post("http://192.168.0.155:8003/token", data)
+    let res = await axios.post("http://compiler.today:4000/token", data)
     console.log("\nToken generated successfully!\n")
     token = res.data
   }
@@ -55,7 +55,7 @@ async function main() {
         break;
       }
     }
-    const socket = io("http://192.168.0.155:8003");
+    const socket = io("http://compiler.today:4000");
 
     socket.on("connect", async () => {
       console.log("I am connected to the socket server worker thread... Yayyyy!!");

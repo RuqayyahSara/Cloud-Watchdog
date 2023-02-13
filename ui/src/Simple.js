@@ -4,7 +4,7 @@ import io from "socket.io-client";
 
 function Simple() {
   const [performanceData, setPerformanceData] = useState({});
-  const [macA, setMacA] = useState([]);
+  const [macA, setMacA] = useState({});
 
   useEffect(() => {
     // setMacA(['08:00:27:72:80:14'])
@@ -15,18 +15,25 @@ function Simple() {
         let token =
           "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjoiZTd0RzZhelZlbVdnN210IiwiaWF0IjoxNjcwOTE3ODIxLCJleHAiOjE2NzA5MjE0MjF9.DueInufE9eXfDrUoWJeaaXhZ1r6nkb_5wRfIm6GllNI";
 
-        const socket = io.connect("http://192.168.0.155:8003");
+        const socket = io.connect("http://compiler.today:4000");
         socket.emit("clientAuth", token);
 
         socket.on("data", (data) => {
 
-          let index = macA.findIndex(e => e === data.macA)
-          if (index === -1) {
-            let mac = []
-            mac = macA
-            mac.push(data.macA)
-            setMacA(mac)
-          }
+          //let index = macA.findIndex(e => e === data.macA)
+          //if (index === -1) {
+            //let mac = []
+           // mac = macA
+ //console.log(mac)
+          //  mac.push(data.macA)
+
+//setMacA(mac)
+	   //setMacA({
+            //...macA,
+            //[data.macA]: data.macA
+          //})
+
+          
           setPerformanceData({
             ...performanceData,
             [data.macA]: data
@@ -45,7 +52,7 @@ function Simple() {
     <>
    <h1>Watch Dog Client Screens</h1>
 
-      { macA.map((e, i) => performanceData[e] && (
+      { Object.keys(performanceData).map((e, i) => performanceData[e] && (
         <ol key={i}>
           <li><b>Screen {i+1}</b></li>
           <li>MAC Address - <b>{performanceData[e].macA}</b></li>

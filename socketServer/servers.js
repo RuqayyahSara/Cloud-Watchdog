@@ -15,7 +15,7 @@ import socketMain from "./socketMain.js";
 
 const __filename = fileURLToPath(import.meta.url); //
 const __dirname = path.dirname(__filename); //
-const port = 8003;
+const port = 4000;
 
 const num_cores = os.cpus().length;
 
