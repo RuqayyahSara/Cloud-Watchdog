@@ -1,5 +1,5 @@
 
-const os = require("os");
+const os = require("os")
 const { io } = require("socket.io-client");
 const { setTimeout } = require("timers/promises")
 const readlineSync = require('readline-sync');
