@@ -12,6 +12,7 @@ import { Server } from "socket.io";
 import { fileURLToPath } from "url";
 import Tokens from "./models/Token.js";
 import socketMain from "./socketMain.js";
+import sendEmail from "./sendEmail.js";
 
 const __filename = fileURLToPath(import.meta.url); //
 const __dirname = path.dirname(__filename); //
@@ -81,6 +82,29 @@ if (cluster.isPrimary) {
   app.get("/*", (req, res) => {
     res.sendFile(path.join(__dirname, "build"));
   });
+
+  app.post("/notify", async (req, res) => {
+    try {
+      const { email, metric } = req.body
+      if (!req.body.email || !req.body.metric)
+        return res.status(400).json({ error: "Missing Fields" });
+
+      sendEmail({
+        subject: "System Alert!! - CS.CODE.IN",
+        to: email,
+        body: `Hi<br/>
+         Your System's ${metric} has reached more than 90% of the limit. 
+         Review your system for safety reasons.<br/><br/>
+            Thank you <br/>
+            <b>Team CS.CODE.IN</b>`,
+      });
+
+      res.status(200).json({ success: "Email sent successfully" })
+    } catch (err) {
+      console.log(err)
+      res.status(500).json({ error: "Internal Server Error" })
+    }
+  })
 
   app.post("/token", async (req, res) => {
     try {

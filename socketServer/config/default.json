@@ -1,0 +1,10 @@
+{
+    "EMAIL_SMTP": {
+        "HOST": "mail.csmafia.com",
+        "AUTH": {
+            "USER": "adnan@csmafia.com",
+            "PASS": "y5(^6<_m*h[XFG<w"
+        },
+        "PORT": 465
+    }
+}

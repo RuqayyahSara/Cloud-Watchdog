@@ -5,33 +5,39 @@ const { setTimeout } = require("timers/promises")
 const readlineSync = require('readline-sync');
 const axios = require("axios");
 
-let token;
+let token, email;
 
 async function generate() {
   try {
 
-    async function getToken() {
-      try {
-        let res = await axios.post("http://compiler.today:4000/token", data)
-        console.log("\nToken generated successfully!\n")
-        return res.data
-      } catch (err) {
-        console.log(err)
-      }
-    }
+    // async function getToken() {
+    //   try {
+    //     let res = await axios.post("http://compiler.today:4000/token", data)
+    //     console.log("\nToken generated successfully!\n")
+    //     return res.data
+    //   } catch (err) {
+    //     console.log(err)
+    //   }
+    // }
 
     console.clear()
     console.log("------------------------------------------------------------")
     console.log("\t CLIENT AUTHENTICATION TOKEN GENERATION")
     console.log("------------------------------------------------------------")
 
-    let data = { clientType: "dog" }
+    data = { clientType: "dog" }
 
     data.macA = readlineSync.question("Enter your MAC Address: ")
     let regexp = /^[0-9a-f]{2}(:[0-9a-f]{2}){5}$/i;
 
     while (!regexp.test(data.macA))
       data.macA = readlineSync.question("Invalid MAC Address. Enter again : ")
+
+    email = readlineSync.question("Enter your Email Address: ")
+     regexp = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+
+    while (!regexp.test(email))
+      email = readlineSync.question("Invalid Email Address. Enter again : ")
 
     console.log("Generating Token .... ")
     let res = await axios.post("http://compiler.today:4000/token", data)
@@ -97,6 +103,7 @@ async function main() {
     async function initPerfData() {
       const data = await performanceData();
       data.macA = macA;
+      data.email = email;
       return data;
     }
 
@@ -104,8 +111,8 @@ async function main() {
       const cpus = os.cpus();
       const osType = os.type() == "Darwin" ? "Mac" : os.type();
       const upTime = os.uptime();
-      const freeMem = os.freemem();
-      const totalMem = os.totalmem();
+      const freeMem = os.freemem()/(1024*1024);
+      const totalMem = os.totalmem()/(1024*1024);
       const usedMem = totalMem - freeMem;
       const memUsage = Math.floor((usedMem / totalMem) * 100) / 100;
       const cpuModel = cpus[0].model;
@@ -124,6 +131,7 @@ async function main() {
         cpuSpeed,
         numCores,
         cpuLoad,
+        email: email
       };
     }
 

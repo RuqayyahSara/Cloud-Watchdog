@@ -1,7 +1,7 @@
 import React from "react";
 import { useState, useEffect } from "react";
 import io from "socket.io-client";
-
+import axios from "axios"
 function Simple() {
   const [performanceData, setPerformanceData] = useState({});
   const [macA, setMacA] = useState([]);
@@ -18,8 +18,15 @@ function Simple() {
         const socket = io.connect("http://compiler.today:4000");
         socket.emit("clientAuth", token);
 
-        socket.on("data", (data) => {
-
+        socket.on("data", async (data) => {
+          if (data.cpuLoad >= 90) {
+            let res = await axios.post("/notify", { email: data.email, metric: "CPU Load" })
+            console.log(res.data)
+          }
+          if (data.memUsage >= 0.90) {
+            let res = await axios.post("/notify", { email: data.email, metric: "RAM" })
+            console.log(res.data)
+          }
           let index = macA.findIndex(e => e === data.macA)
           if (index === -1) {
             let mac = []
@@ -31,7 +38,6 @@ function Simple() {
             perfData = performanceData
             perfData[data.macA] = data
             setPerformanceData(perfData)
-            console.log(performanceData)
           }
           else {
             setPerformanceData({
@@ -42,7 +48,7 @@ function Simple() {
 
         });
       } catch (error) {
-        console.log(error);
+        console.log(error.response.data);
       }
     }
 
@@ -58,15 +64,16 @@ function Simple() {
         <ol key={i}>
           <li><b>Screen {i + 1}</b></li>
           <li>MAC Address - <b>{performanceData[e].macA}</b></li>
-          <li>Up Time - {performanceData[e].upTime} </li>
+          <li>Up Time - {performanceData[e].upTime} s</li>
           <li>OS Type - {performanceData[e].osType} </li>
           <li>CPU Model Type - {performanceData[e].cpuModel} </li>
           <li>Number of Cores - {performanceData[e].numCores} </li>
-          <li>CPU Speed - {performanceData[e].cpuSpeed} </li>
-          <li>CPU Load - {performanceData[e].cpuLoad} </li>
-          <li>Total Memory : {performanceData[e].totalMem}</li>
-          <li>Used Memory : {performanceData[e].usedMem}</li>
-          <li>Free Memory : {performanceData[e].freeMem}</li>
+          <li>CPU Speed - {performanceData[e].cpuSpeed / 1024} GHz</li>
+          <li>CPU Load - {performanceData[e].cpuLoad} %</li>
+          <li>Total Memory : {performanceData[e].totalMem} MB</li>
+          <li>Used Memory : {performanceData[e].usedMem} MB</li>
+          <li>Free Memory : {performanceData[e].freeMem} MB</li>
+          <li>Memory Usage: {performanceData[e].memUsage} %</li>
           <hr />
         </ol>
       ))}
